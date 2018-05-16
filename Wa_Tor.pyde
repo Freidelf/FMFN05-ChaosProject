@@ -1,6 +1,4 @@
 import random
-import numpy
-
 class Water:
     xpos = X
     ypos = Y
@@ -23,7 +21,7 @@ class Water:
     def isWater(self):
         return True
 
-cols, rows = 200,200;
+cols, rows = 20,20;
 Dim = 1000; 
 SET_INIT_COND = 0;
 Fishes = 0
@@ -51,12 +49,12 @@ def draw():
         frameRate(60)
         for i in range(cols):
             for j in range(rows):
-                #chronon(i,j)
+                chronon(i,j)
                 
                 # curPos = pos.pop(int(random.random() * (len(pos)-1)))
                 # chronon(curPos[0],curPos[-1])
                 
-                chronon(np.random.randint(0,rows) ,np.random.randint(0,cols) )
+                #chronon(int(random.random() * rows),int(random.random() * cols))
                 
         for i in range(cols):
             for j in range(rows):
