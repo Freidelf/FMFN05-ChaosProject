@@ -1,11 +1,15 @@
 import random
+import numpy
+
 class Water:
     xpos = X
     ypos = Y
+    moved = 0
     
     def __init__(self, X, Y):
         self.xpos = X
         self.ypos = Y
+        self.moved = 0
         
     def move(self):
         return
@@ -35,18 +39,29 @@ def setup():
     
     
 def draw():
-    counter = 0
+    print(frameRate)
+    # pos = [0]*rows*cols
+    # for i in range(cols):
+    #     for j in range(rows):
+    #         pos[i*200+j] = (i,j) 
+    
     if SET_INIT_COND == 0:
         initCondition()
     else:
-        counter = counter%100
-        frameRate(2)
+        frameRate(60)
         for i in range(cols):
             for j in range(rows):
-                chronon(i,j)
+                #chronon(i,j)
+                
+                # curPos = pos.pop(int(random.random() * (len(pos)-1)))
+                # chronon(curPos[0],curPos[-1])
+                
+                chronon(np.random.randint(0,rows) ,np.random.randint(0,cols) )
+                
         for i in range(cols):
             for j in range(rows):
                 temp = CURRENTmatrix[i][j]
+                CURRENTmatrix[i][j].moved = 0
                 if temp.isWater():
                     fill(0)
                 elif temp.isFish():
@@ -71,7 +86,9 @@ def initCondition():
                 rect(i*Dim/cols,j*Dim/rows,Dim/cols,Dim/rows)
 
 def chronon(x,y):
-    CURRENTmatrix[x][y].move()
+    if (CURRENTmatrix[x][y].moved ==0):
+        CURRENTmatrix[x][y].moved = 1
+        CURRENTmatrix[x][y].move()
         
 def keyPressed():
     global SET_INIT_COND
@@ -118,6 +135,7 @@ class Fish:
     xpos = X
     ypos = Y
     ReprodTimer = 0.0
+    moved = 0
     
     def __init__(self, X, Y):
         self.xpos = X
@@ -154,7 +172,7 @@ class Fish:
                 CURRENTmatrix[oldx][oldy] = Water(oldx,oldy)
 
         self.ReprodTimer += 0.04
-        
+                
     def isFish(self):
         return True
     
@@ -166,6 +184,7 @@ class Fish:
     
 
 class Shark:
+    moved = 0
     xpos = X
     ypos = Y
     ReprodTimer = 0.0
