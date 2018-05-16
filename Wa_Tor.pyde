@@ -19,11 +19,13 @@ class Water:
     def isWater(self):
         return True
 
-cols, rows = 50,50;
+cols, rows = 200,200;
 Dim = 1000; 
 SET_INIT_COND = 0;
 Fishes = 0
 Sharks = 0
+counter = 0
+
 
 CURRENTmatrix = [[Water(x,y) for x in range(cols)] for y in range(rows)];
 
@@ -33,10 +35,11 @@ def setup():
     
     
 def draw():
+    counter = 0
     if SET_INIT_COND == 0:
         initCondition()
     else:
-        print("Fiskar: " + str(Fishes) + " stycken, Hajar: " + str(Sharks) + " stycken.")
+        counter = counter%100
         frameRate(2)
         for i in range(cols):
             for j in range(rows):
@@ -52,6 +55,7 @@ def draw():
                     fill(0,255,0)
                 rectMode(CORNER)
                 rect(i*Dim/cols,j*Dim/rows,Dim/cols,Dim/rows)
+
 def initCondition():
         noStroke()
         for i in range(cols):
@@ -74,6 +78,12 @@ def keyPressed():
     global SHOW_COUNT
     global Fishes
     global Sharks
+    global counter
+    if key == BACKSPACE:
+        counter = counter%100
+        print("Fiskar: " + str(Fishes) + " stycken, Hajar: " + str(Sharks) + " stycken.")
+        chronon(counter%10,floor(counter/10))
+        counter += 1
     if key == ENTER:
         if SET_INIT_COND == 0:
             SET_INIT_COND = 1
@@ -83,21 +93,25 @@ def keyPressed():
         for i in range(cols):
             for j in range(rows):
                 d = random.randint(0,500)
-                if d < 400:
+                if d < 490:
                     CURRENTmatrix[i][j] = Water(i,j)
-                elif d < 501:
+                elif d < 499:
                     CURRENTmatrix[i][j] = Fish(i,j)
                 else:
                     CURRENTmatrix[i][j] = Shark(i,j)
-            
+        
 def mousePressed():
+    global Fishes
+    global Sharks
     if mouseButton == LEFT:
             temp = CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))]
             if temp.isWater():
                 CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))] = Shark(floor(mouseX/(Dim/rows)), floor(mouseY/(Dim/cols)))
             elif temp.isShark():
+                Sharks -= 1
                 CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))] = Fish(floor(mouseX/(Dim/rows)), floor(mouseY/(Dim/cols)))
             elif temp.isFish:
+                Fishes -=1
                 CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))] = Water(floor(mouseX/(Dim/rows)), floor(mouseY/(Dim/cols)))
                 
 class Fish:
@@ -115,7 +129,7 @@ class Fish:
         self.xpos = self.xpos%cols
         self.ypos = self.ypos%rows
         surrounding = [CURRENTmatrix[self.xpos%cols][(self.ypos + 1)%rows], CURRENTmatrix[(self.xpos + 1)%cols][self.ypos%rows], CURRENTmatrix[self.xpos%cols][(self.ypos - 1)%rows], CURRENTmatrix[(self.xpos - 1)%cols][self.ypos%rows]]
-        p = [1,2,3,4]
+        p = ["down","right","up","left"]
         possibilities = []
         oldx = self.xpos%rows
         oldy = self.ypos%cols
@@ -124,13 +138,13 @@ class Fish:
                 possibilities.append(p[i])
         if possibilities:
             decision = random.choice(possibilities)
-            if decision == 1:
-                self.ypos += 0
-            elif decision == 2:
-                self.xpos += 1
-            elif decision == 3:
+            if decision == "up":
                 self.ypos -= 1
-            elif decision == 4:
+            elif decision == "right":
+                self.xpos += 1
+            elif decision == "down":
+                self.ypos += 1
+            elif decision == "left":
                 self.xpos -= 1
             CURRENTmatrix[self.xpos%rows][self.ypos%cols] = self
             if self.ReprodTimer > 1:
@@ -175,7 +189,7 @@ class Shark:
         self.xpos = self.xpos%cols
         self.ypos = self.ypos%rows
         surrounding = [CURRENTmatrix[self.xpos%cols][(self.ypos + 1)%rows], CURRENTmatrix[(self.xpos + 1)%cols][self.ypos%rows], CURRENTmatrix[self.xpos%cols][(self.ypos - 1)%rows], CURRENTmatrix[(self.xpos - 1)%cols][self.ypos%rows]]
-        p = ["up","right","down","left"]
+        p = ["down","right","up","left"]
         possibilitiesWater = []
         possibilitiesFish = []
         oldx = self.xpos
@@ -189,11 +203,11 @@ class Shark:
             if possibilitiesWater:
                 decision = random.choice(possibilitiesWater)
                 if decision == "up":
-                    self.ypos += 1
+                    self.ypos -= 1
                 elif decision == "right":
                     self.xpos += 1
                 elif decision == "down":
-                    self.ypos -= 1
+                    self.ypos += 1
                 elif decision == "left":
                     self.xpos -= 1
                 CURRENTmatrix[self.xpos%cols][self.ypos%rows] = self
@@ -207,11 +221,11 @@ class Shark:
             Fishes -= 1
             self.Energy += 0.15
             if decision == "up":
-                self.ypos += 1
+                self.ypos -= 1
             elif decision == "right":
                 self.xpos += 1
             elif decision == "down":
-                self.ypos -= 1
+                self.ypos += 1
             elif decision == "left":
                 self.xpos -= 1
             CURRENTmatrix[self.xpos%cols][self.ypos%rows] = self
@@ -219,7 +233,7 @@ class Shark:
                 CURRENTmatrix[oldx][oldy] = Shark(oldx,oldy)
             else:
                 CURRENTmatrix[oldx][oldy] = Water(oldx,oldy)
-        self.Energy -= 0.06
+        self.Energy -= 0.02
 
     def isFish(self):
         return False
