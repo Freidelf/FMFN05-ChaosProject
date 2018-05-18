@@ -21,13 +21,15 @@ class Water:
     def isWater(self):
         return True
 
-cols, rows = 20,20;
+cols, rows = 200,200;
 Dim = 1000; 
 SET_INIT_COND = 0;
 Fishes = 0
 Sharks = 0
+PLOT_LENGTH = 500
+FishArray = [0]*PLOT_LENGTH
+SharkArray = [0]*PLOT_LENGTH
 counter = 0
-
 
 CURRENTmatrix = [[Water(x,y) for x in range(cols)] for y in range(rows)];
 
@@ -37,25 +39,29 @@ def setup():
     
     
 def draw():
-    print(frameRate)
-    # pos = [0]*rows*cols
-    # for i in range(cols):
-    #     for j in range(rows):
-    #         pos[i*200+j] = (i,j) 
-    
+    global Sharks
+    global Fishes
+    global counter
+    global FishArray
+    global SharkArray
+    counter = (counter + 1)%PLOT_LENGTH
+    print("antal hajar: " + str(Sharks) + "antal fiskar: " + str(Fishes))
     if SET_INIT_COND == 0:
         initCondition()
     else:
         frameRate(60)
+        t = random.randint(1,4)
         for i in range(cols):
             for j in range(rows):
+                if t == 1:
+                    i = -i
+                if t == 2:
+                    j = -j
+                if t == 3:
+                    i = -i
+                    j = -j
                 chronon(i,j)
-                
-                # curPos = pos.pop(int(random.random() * (len(pos)-1)))
-                # chronon(curPos[0],curPos[-1])
-                
-                #chronon(int(random.random() * rows),int(random.random() * cols))
-                
+        
         for i in range(cols):
             for j in range(rows):
                 temp = CURRENTmatrix[i][j]
@@ -68,7 +74,9 @@ def draw():
                     fill(0,255,0)
                 rectMode(CORNER)
                 rect(i*Dim/cols,j*Dim/rows,Dim/cols,Dim/rows)
-
+    FishArray[counter] = Fishes
+    SharkArray[counter] = Sharks
+    
 def initCondition():
         noStroke()
         for i in range(cols):
@@ -84,7 +92,7 @@ def initCondition():
                 rect(i*Dim/cols,j*Dim/rows,Dim/cols,Dim/rows)
 
 def chronon(x,y):
-    if (CURRENTmatrix[x][y].moved ==0):
+    if (CURRENTmatrix[x][y].moved == 0):
         CURRENTmatrix[x][y].moved = 1
         CURRENTmatrix[x][y].move()
         
@@ -93,12 +101,8 @@ def keyPressed():
     global SHOW_COUNT
     global Fishes
     global Sharks
-    global counter
-    if key == BACKSPACE:
-        counter = counter%100
-        print("Fiskar: " + str(Fishes) + " stycken, Hajar: " + str(Sharks) + " stycken.")
-        chronon(counter%10,floor(counter/10))
-        counter += 1
+    #if key == BACKSPACE:
+        
     if key == ENTER:
         if SET_INIT_COND == 0:
             SET_INIT_COND = 1
@@ -108,9 +112,9 @@ def keyPressed():
         for i in range(cols):
             for j in range(rows):
                 d = random.randint(0,500)
-                if d < 490:
+                if d < 400:
                     CURRENTmatrix[i][j] = Water(i,j)
-                elif d < 499:
+                elif d < 494:
                     CURRENTmatrix[i][j] = Fish(i,j)
                 else:
                     CURRENTmatrix[i][j] = Shark(i,j)
@@ -162,6 +166,9 @@ class Fish:
                 self.ypos += 1
             elif decision == "left":
                 self.xpos -= 1
+            global toDraw
+            # toDraw.append((oldx%rows,oldy%cols))
+            # toDraw.append((self.xpos%rows,self.ypos%cols))
             CURRENTmatrix[self.xpos%rows][self.ypos%cols] = self
             if self.ReprodTimer > 1:
                 CURRENTmatrix[oldx][oldy] = Fish(oldx,oldy)
@@ -169,7 +176,7 @@ class Fish:
             else:
                 CURRENTmatrix[oldx][oldy] = Water(oldx,oldy)
 
-        self.ReprodTimer += 0.04
+        self.ReprodTimer += 0.08
                 
     def isFish(self):
         return True
@@ -199,6 +206,7 @@ class Shark:
         
     def move(self):
         if self.Energy < 0.0:
+            # toDraw.append((self.xpos%rows,self.ypos%cols))
             CURRENTmatrix[self.xpos%cols][self.ypos%rows] = Water(self.xpos%cols, self.ypos%rows)
             global Sharks
             Sharks -= 1
@@ -228,6 +236,8 @@ class Shark:
                 elif decision == "left":
                     self.xpos -= 1
                 CURRENTmatrix[self.xpos%cols][self.ypos%rows] = self
+                # toDraw.append((oldx%rows,oldy%cols))
+                # toDraw.append((self.xpos%rows,self.ypos%cols))
                 if self.Energy > 0.95:
                     CURRENTmatrix[oldx][oldy] = Shark(oldx,oldy)
                 else:
@@ -236,7 +246,8 @@ class Shark:
             decision = random.choice(possibilitiesFish)
             global Fishes
             Fishes -= 1
-            self.Energy += 0.15
+            if self.Energy < 0.85:
+                self.Energy +=0.15
             if decision == "up":
                 self.ypos -= 1
             elif decision == "right":
@@ -246,11 +257,13 @@ class Shark:
             elif decision == "left":
                 self.xpos -= 1
             CURRENTmatrix[self.xpos%cols][self.ypos%rows] = self
-            if self.Energy > 0.95:
+            # toDraw.append((oldx%rows,oldy%cols))
+            # toDraw.append((self.xpos%rows,self.ypos%cols))
+            if self.Energy > 0.98:
                 CURRENTmatrix[oldx][oldy] = Shark(oldx,oldy)
             else:
                 CURRENTmatrix[oldx][oldy] = Water(oldx,oldy)
-        self.Energy -= 0.02
+        self.Energy -= 0.04
 
     def isFish(self):
         return False
