@@ -27,6 +27,7 @@ SET_INIT_COND = 0;
 Fishes = 0
 Sharks = 0
 PLOT_LENGTH = 500
+SHOW_PLOT = 0
 FishArray = [0]*PLOT_LENGTH
 SharkArray = [0]*PLOT_LENGTH
 counter = 0
@@ -77,6 +78,13 @@ def draw():
     FishArray[counter] = Fishes
     SharkArray[counter] = Sharks
     
+    if SHOW_PLOT == 1:
+        fill(255)
+        rect(Dim/2,2*Dim/4,Dim/2,Dim/4)
+        for i in range(PLOT_LENGTH):
+            fill(255,0,0)
+            rect(Dim/2 + i, 3*Dim/4 + FishArray[i]/(Dim/4),4,4)
+        
 def initCondition():
         noStroke()
         for i in range(cols):
@@ -98,11 +106,11 @@ def chronon(x,y):
         
 def keyPressed():
     global SET_INIT_COND
-    global SHOW_COUNT
+    global SHOW_PLOT
     global Fishes
     global Sharks
-    #if key == BACKSPACE:
-        
+    if key == BACKSPACE:
+        SHOW_PLOT = 1       
     if key == ENTER:
         if SET_INIT_COND == 0:
             SET_INIT_COND = 1
@@ -118,10 +126,13 @@ def keyPressed():
                     CURRENTmatrix[i][j] = Fish(i,j)
                 else:
                     CURRENTmatrix[i][j] = Shark(i,j)
+
+def keyReleased():
+    global SHOW_PLOT
+    if key == BACKSPACE:
+        SHOW_PLOT = 0
         
 def mousePressed():
-    global Fishes
-    global Sharks
     if mouseButton == LEFT:
             temp = CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))]
             if temp.isWater():
