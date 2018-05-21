@@ -1,4 +1,6 @@
 import random
+import sys
+
 #strogatz nonlinear dynamics and chaos
 class Water:
     xpos = X
