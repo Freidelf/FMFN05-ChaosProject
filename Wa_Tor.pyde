@@ -33,6 +33,8 @@ FishArray = [0]*PLOT_LENGTH
 SharkArray = [0]*PLOT_LENGTH
 counter = 0
 
+file = open('nbr_of_animals.txt', "w")
+
 CURRENTmatrix = [[Water(x,y) for x in range(cols)] for y in range(rows)];
 
 def setup():
@@ -48,6 +50,7 @@ def draw():
     global SharkArray
     counter = (counter + 1)%PLOT_LENGTH
     print("antal hajar: " + str(Sharks) + "antal fiskar: " + str(Fishes))
+    file.writeline(str(Sharks) + "," + str(Fishes) + "\n" )
     if SET_INIT_COND == 0:
         initCondition()
     else:
@@ -94,8 +97,7 @@ def draw():
             stroke(0)
             line(Dim/2 + 10, 3*Dim/4, Dim/2 + 10, Dim/2)
             line(Dim/2, 3*Dim/4 - 10, Dim, 3*Dim/4 - 10)
-            noStroke() 
-            
+            noStroke()         
         
 def initCondition():
         noStroke()
