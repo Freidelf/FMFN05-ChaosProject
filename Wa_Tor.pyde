@@ -50,7 +50,7 @@ def draw():
     global SharkArray
     counter = (counter + 1)%PLOT_LENGTH
     print("antal hajar: " + str(Sharks) + "antal fiskar: " + str(Fishes))
-    file.writeline(str(Sharks) + "," + str(Fishes) + "\n" )
+    file.writelines(str(Sharks) + "," + str(Fishes) + "\n" )
     if SET_INIT_COND == 0:
         initCondition()
     else:
