@@ -7,4 +7,4 @@ GameOfLife - implementation of the Game of Life cellular atuomata
    
 AnimalGrassWater - implementation of the Animal/Grass/Water cellular automata (INCOMPLETE)
 
-Wa_Tor - simulation of the Wa Tor world. Press tab to generate initial condition, then press enter to run the simulation.
+Wa_Tor - simulation of the Wa Tor world. Press tab to generate initial condition, then press enter to run the simulation. Hold BACKSPACE to view a plot of fishes and sharks vs time.
