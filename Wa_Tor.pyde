@@ -79,11 +79,18 @@ def draw():
     SharkArray[counter] = Sharks
     
     if SHOW_PLOT == 1:
+        # fill(255)
+        # rect(Dim/2,2*Dim/4,Dim/2,Dim/4)
+        # for i in range(PLOT_LENGTH):
+        #     fill(255,0,0)
+        #     rect(Dim/2 + i, 3*Dim/4 - FishArray[i]/(Dim/5),1,1)
+        #     fill(0)
         fill(255)
         rect(Dim/2,2*Dim/4,Dim/2,Dim/4)
         for i in range(PLOT_LENGTH):
-            fill(255,0,0)
-            rect(Dim/2 + i, 3*Dim/4 + FishArray[i]/(Dim/4),4,4)
+            fill(0)
+            rect(Dim/2 + FishArray[i]/(Dim/2), 3*Dim/4 - SharkArray[i]/(Dim/2),1,1)
+            
         
 def initCondition():
         noStroke()
@@ -117,6 +124,8 @@ def keyPressed():
         else:
             SET_INIT_COND = 0
     if key == TAB:
+        Fishes = 0
+        Sharks = 0
         for i in range(cols):
             for j in range(rows):
                 d = random.randint(0,500)
