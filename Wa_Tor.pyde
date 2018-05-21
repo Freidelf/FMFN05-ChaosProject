@@ -1,4 +1,5 @@
 import random
+#strogatz nonlinear dynamics and chaos
 class Water:
     xpos = X
     ypos = Y
@@ -89,7 +90,11 @@ def draw():
         rect(Dim/2,2*Dim/4,Dim/2,Dim/4)
         for i in range(PLOT_LENGTH):
             fill(0)
-            rect(Dim/2 + FishArray[i]/(Dim/2), 3*Dim/4 - SharkArray[i]/(Dim/2),1,1)
+            rect(Dim/2 + 10 + FishArray[i]/(Dim/40), 3*Dim/4 - 10 - SharkArray[i]/(Dim/40),1,1)
+            stroke(0)
+            line(Dim/2 + 10, 3*Dim/4, Dim/2 + 10, Dim/2)
+            line(Dim/2, 3*Dim/4 - 10, Dim, 3*Dim/4 - 10)
+            noStroke() 
             
         
 def initCondition():
