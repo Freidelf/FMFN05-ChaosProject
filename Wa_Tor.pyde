@@ -1,6 +1,5 @@
 import random
-import sys
-
+import copy
 #strogatz nonlinear dynamics and chaos
 class Water:
     xpos = X
@@ -29,15 +28,18 @@ Dim = 1000;
 SET_INIT_COND = 0;
 Fishes = 0
 Sharks = 0
+SAVEDfishes = 0
+SAVEDsharks = 0
 PLOT_LENGTH = 500
 SHOW_PLOT = 0
 FishArray = [0]*PLOT_LENGTH
 SharkArray = [0]*PLOT_LENGTH
 counter = 0
 
-file = open('nbr_of_animals.txt', "w")
+file = open('nbr_of_animals_run_1.txt', "w")
 
 CURRENTmatrix = [[Water(x,y) for x in range(cols)] for y in range(rows)];
+SAVEDmatrix = [[Water(x,y) for x in range(cols)] for y in range(rows)];
 
 def setup():
     size(Dim, Dim)
@@ -121,12 +123,46 @@ def chronon(x,y):
         CURRENTmatrix[x][y].move()
         
 def keyPressed():
+    counter = 1
     global SET_INIT_COND
     global SHOW_PLOT
     global Fishes
     global Sharks
+    global SAVEDmatrix
+    global SAVEDfishes
+    global SAVEDsharks
+    global file
+    if key == DELETE:
+        # SAVEDmatrix = copy.deepcopy(CURRENTmatrix)
+        SAVEDfishes = Fishes
+        SAVEDsharks = Sharks
+        for i in range(cols):
+            for j in range(rows):
+                if CURRENTmatrix [i][j].isWater():
+                    SAVEDmatrix[i][j] = Water(i,j)
+                elif CURRENTmatrix[i][j].isFish():
+                    SAVEDmatrix[i][j] = Fish(i,j)
+                    SAVEDmatrix[i][j].ReprodTimer = CURRENTmatrix[i][j].ReprodTimer
+                else:
+                    SAVEDmatrix[i][j] = Shark(i,j)
+                    SAVEDmatrix[i][j].ReprodTimer = CURRENTmatrix[i][j].ReprodTimer
+                    SAVEDmatrix[i][j].Energy = CURRENTmatrix[i][j].Energy
     if key == BACKSPACE:
-        SHOW_PLOT = 1       
+        counter += 1
+        file = open("nbr_of_animals_run_" + str(counter) + ".txt", "w")
+        Fishes = SAVEDfishes
+        Sharks = SAVEDsharks
+        for i in range(cols):
+            for j in range(rows):
+                if SAVEDmatrix [i][j].isWater():
+                    CURRENTmatrix[i][j] = Water(i,j)
+                elif SAVEDmatrix[i][j].isFish():
+                    CURRENTmatrix[i][j] = Fish(i,j)
+                    CURRENTmatrix[i][j].ReprodTimer = SAVEDmatrix[i][j].ReprodTimer
+                else:
+                    CURRENTmatrix[i][j] = Shark(i,j)
+                    CURRENTmatrix[i][j].ReprodTimer = SAVEDmatrix[i][j].ReprodTimer
+                    CURRENTmatrix[i][j].Energy = SAVEDmatrix[i][j].Energy
     if key == ENTER:
         if SET_INIT_COND == 0:
             SET_INIT_COND = 1
@@ -150,17 +186,19 @@ def keyReleased():
     if key == BACKSPACE:
         SHOW_PLOT = 0
         
-def mousePressed():
-    if mouseButton == LEFT:
-            temp = CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))]
-            if temp.isWater():
-                CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))] = Shark(floor(mouseX/(Dim/rows)), floor(mouseY/(Dim/cols)))
-            elif temp.isShark():
-                Sharks -= 1
-                CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))] = Fish(floor(mouseX/(Dim/rows)), floor(mouseY/(Dim/cols)))
-            elif temp.isFish:
-                Fishes -=1
-                CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))] = Water(floor(mouseX/(Dim/rows)), floor(mouseY/(Dim/cols)))
+# def mousePressed():
+#     global Fishes
+#     global Sharks
+#     if mouseButton == LEFT:
+#             temp = CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))]
+#             if temp.isWater():
+#                 CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))] = Shark(floor(mouseX/(Dim/rows)), floor(mouseY/(Dim/cols)))
+#             elif temp.isShark():
+#                 Sharks -= 1
+#                 CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))] = Fish(floor(mouseX/(Dim/rows)), floor(mouseY/(Dim/cols)))
+#             elif temp.isFish:
+#                 Fishes -=1
+#                 CURRENTmatrix[floor(mouseX/(Dim/rows))][floor(mouseY/(Dim/cols))] = Water(floor(mouseX/(Dim/rows)), floor(mouseY/(Dim/cols)))
                 
 class Fish:
     xpos = X
